@@ -34,7 +34,7 @@ class Qwen25VL7B_dashscope(VLM):
   def inference(self, prompt: Prompt):
     messages = prompt.to_json()
     response = self.client.chat.completions.create(
-      model = 'qwen2.5-vl-7b-instruct',
+      model = 'qwen3-vl-plus',
       messages = messages,
     )
     return response.choices[0].message.content
