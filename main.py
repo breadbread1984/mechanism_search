@@ -21,7 +21,7 @@ def main(unused_argv):
     elif pix.n == 4: img = img.reshape(pix.height, pix.width, 4)
     results = mf.process(img)
     if results['has_mechanism'] == True:
-      print(f"figure {results['figure']} on page {idx + 1} is mechanism diagram")
+      print(f"figure #{results['figure']} on page {idx + 1} is mechanism diagram")
 
 if __name__ == "__main__":
   add_options()
