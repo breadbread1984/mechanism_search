@@ -12,7 +12,7 @@ class MechanismFinder(object):
   def __init__(self, ):
     self.model = Qwen25VL7B_dashscope(api_key = configs.dashscope_api_key)
     class Output(BaseModel):
-      has_mechanism: bool = Field(..., description = "whether current paper snippet contains a drug mechaism diagram.")
+      has_mechanism: bool = Field(..., description = "whether current picture contains a drug mechaism diagram.")
       figure: Optional[int] = Field(None, description = "figure number in integer format (if has_mechanism=true)")
     self.parser = JsonOutputParser(pydantic_object = Output)
     self.instruction = self.parser.get_format_instructions()
