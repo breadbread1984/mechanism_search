@@ -64,10 +64,11 @@ Please determine whether the current paper snippet contains a drug mechanism dia
         x1,y1,x2,y2 = results['position']
         x1, x2 = int(x1 / 1000 * img.shape[1]), int(x2 / 1000 * img.shape[1])
         y1, y2 = int(y1 / 1000 * img.shape[0]), int(y2 / 1000 * img.shape[0])
+        y1 -= int(img.shape[0] * 0.075)
         pics.append({
           'page_num': idx + 1,
-          'figure_num': results['figure'] + '' if results['subfigure'] is None else results['subfigure'],
+          'figure_num': str(results['figure']) + ('' if results['subfigure'] is None else results['subfigure']),
           'position': results['position'],
-          'image': img[y1:y2,x1:x2],
+          'image': img[y1:y2,x1:x2,::-1],
         })
     return pics
