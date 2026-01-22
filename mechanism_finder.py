@@ -17,7 +17,7 @@ class MechanismFinder(object):
       has_mechanism: bool = Field(..., description = "whether current picture contains a drug mechaism diagram.")
       figure: Optional[int] = Field(None, description = "figure number in integer format (if has_mechanism=true)")
       subfigure: Optional[Literal['a','b','c','d','e','f','g','h','i','j','k','l','m','n']] = Field(None, description = "subfigure number if appliable (is has_mechanism=true)")
-      position: Optional[Tuple[int,int,int,int]] = Field(None, description = "position (top left x1,y1, bottom right x2,y2) of the figure or subfigure in sequence x1,y1,x2,y2")
+      position: Optional[Tuple[int,int,int,int]] = Field(None, description = "precise bounding box coordinates (top left x1,y1, bottom right x2,y2) for the entire figure or subfigure in sequence x1,y1,x2,y2. ensure the entire image is covered.")
     self.parser = JsonOutputParser(pydantic_object = Output)
     self.instruction = self.parser.get_format_instructions()
     self.instruction = self.instruction.replace('{', '{{')
@@ -62,6 +62,8 @@ Please determine whether the current paper snippet contains a drug mechanism dia
       results = self.process_image(img)
       if results['has_mechanism'] == True:
         x1,y1,x2,y2 = results['position']
+        x1, x2 = int(x1 / 1000 * img.shape[1]), int(x2 / 1000 * img.shape[1])
+        y1, y2 = int(y1 / 1000 * img.shape[0]), int(y2 / 1000 * img.shape[0])
         pics.append({
           'page_num': idx + 1,
           'figure_num': results['figure'] + '' if results['subfigure'] is None else results['subfigure'],
