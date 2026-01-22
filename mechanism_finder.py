@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-from typing import Optional
+from typing import Optional, Literal
 from pydantic import BaseModel, Field
 from langchain_core.output_parsers import JsonOutputParser
 from prompt import Prompt
@@ -14,6 +14,7 @@ class MechanismFinder(object):
     class Output(BaseModel):
       has_mechanism: bool = Field(..., description = "whether current picture contains a drug mechaism diagram.")
       figure: Optional[int] = Field(None, description = "figure number in integer format (if has_mechanism=true)")
+      subfigure: Optional[Literal['a','b','c','d','e','f','g','h','i','j','k','l','m','n']] = Field(None, description = "subfigure number if appliable (is has_mechanism=true)")
     self.parser = JsonOutputParser(pydantic_object = Output)
     self.instruction = self.parser.get_format_instructions()
     self.instruction = self.instruction.replace('{', '{{')
