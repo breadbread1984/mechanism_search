@@ -12,7 +12,7 @@ import configs
 
 class MechanismFinder(object):
   def __init__(self, ):
-    self.model = Qwen25VL7B_dashscope(api_key = configs.dashscope_api_key)
+    self.model = PPOCRVL_vllm(configs) #Qwen25VL7B_dashscope(configs = configs)
     class Output(BaseModel):
       has_mechanism: bool = Field(..., description = "whether current picture contains a drug mechaism diagram.")
       figure: Optional[int] = Field(None, description = "figure number in integer format (if has_mechanism=true)")
@@ -62,9 +62,11 @@ Please determine whether the current paper snippet contains a drug mechanism dia
       results = self.process_image(img)
       if results['has_mechanism'] == True:
         x1,y1,x2,y2 = results['position']
+        '''
         x1, x2 = int(x1 / 1000 * img.shape[1]), int(x2 / 1000 * img.shape[1])
         y1, y2 = int(y1 / 1000 * img.shape[0]), int(y2 / 1000 * img.shape[0])
         y1 -= int(img.shape[0] * 0.075)
+        '''
         pics.append({
           'page_num': idx + 1,
           'figure_num': str(results['figure']) + ('' if results['subfigure'] is None else results['subfigure']),

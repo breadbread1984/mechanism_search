@@ -8,28 +8,16 @@ import cv2
 from prompt import Prompt
 
 class VLM(ABC):
-  def encode_img(self, image):
-    if type(image) is str:
-      # image's url is given
-      return image
-    elif type(image) is np.ndarray:
-      success, encoded_image = cv2.imencode('.png', image)
-      assert success, "failed to encode numpy to png image!"
-      png_bytes = encoded_image.tobytes()
-      png_b64 = base64.b64encode(png_bytes).decode('utf-8')
-      return f"data:image/png;base64,{png_b64}"
-    else:
-      raise RuntimeError('image can only be given in url or np.ndarray format!')
   @abstractmethod
   def inference(self, prompt: Prompt):
-    pass
+    raise NotImplementedError
 
 class Qwen25VL7B_dashscope(VLM):
-  def __init__(self, api_key):
+  def __init__(self, configs):
     from openai import OpenAI
     self.client = OpenAI(
-      api_key = api_key,
-      base_url = "https://dashscope.aliyuncs.com/compatible-mode/v1"
+      api_key = configs.dashscope_api_key,
+      base_url = configs.dashscope_host
     )
   def inference(self, prompt: Prompt):
     messages = prompt.to_json()
@@ -38,3 +26,18 @@ class Qwen25VL7B_dashscope(VLM):
       messages = messages,
     )
     return response.choices[0].message.content
+
+class PPOCRVL_vllm(VLM):
+  def __init__(self, configs):
+    from openai import OpenAI
+    self.client = OpenAI(
+      api_key = configs.vllm_api_key,
+      base_url = configs.vllm_host,
+    )
+  def inference(self, prompt: Prompt):
+    messages = prompt.to_json()
+    response = self.client.chat.completions.create(
+      model = 'PaddlePaddle/PaddleOCR-VL',
+      messages = messages,
+    )
+
